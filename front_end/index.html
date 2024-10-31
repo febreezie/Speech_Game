@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Saver</title>
+</head>
+<body>
+    <h1>Save Text to Backend</h1>
+    
+    <!-- Text area for input -->
+    <textarea id="textData" rows="10" cols="50" placeholder="Type your text here..."></textarea>
+    <br>
+    <button onclick="saveText()">Save</button>
+    
+    <p id="result"></p>
+
+    <script>
+        function saveText() {
+            const textData = document.getElementById('textData').value;
+
+            fetch('/save-text', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ textData: textData })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').innerText = data.message;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
