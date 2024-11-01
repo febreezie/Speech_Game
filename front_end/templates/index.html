@@ -4,12 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Text Saver with Continuous Speech-to-Text</title>
+ <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #randomPhrase {
+            font-size: 24px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
     <h1>Test Your Speaking Skills</h1>
+    <div id="randomPhrase"></div>
     
     <!-- Text area for input -->
-    <textarea id="textData" rows="10" cols="50" placeholder="Type or speak your text here..."></textarea>
+    <textarea id="textData" rows="10" cols="50" placeholder="Type or speak here..."></textarea>
     <br>
     <!-- Buttons to start and stop speech-to-text -->
     <button onclick="startSpeechRecognition()">Start Speech</button>
@@ -19,6 +31,33 @@
     <p id="result"></p>
 
     <script>
+
+        // List of random phrases
+        const phrases = [
+            "Farming",
+            "Computer Science",
+            "Technology",
+            "World War 2",
+            "Phsycology",
+            "Medical"
+        ];
+
+        // Function to select a random phrase and display it
+        function displayRandomPhrase() {
+            const randomIndex = Math.floor(Math.random() * phrases.length);
+            const randomPhrase = phrases[randomIndex];
+            document.getElementById('randomPhrase').innerText = randomPhrase;
+        }
+
+        // Call the function to display a random phrase on page load
+        displayRandomPhrase();
+
+
+
+
+
+
+
         let recognition; // Variable to hold the Speech Recognition instance
 
         function startSpeechRecognition() {
