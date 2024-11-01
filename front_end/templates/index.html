@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Saver with Continuous Speech-to-Text</title>
+</head>
+<body>
+    <h1>Test Your Speaking Skills</h1>
+    
+    <!-- Text area for input -->
+    <textarea id="textData" rows="10" cols="50" placeholder="Type or speak your text here..."></textarea>
+    <br>
+    <!-- Buttons to start and stop speech-to-text -->
+    <button onclick="startSpeechRecognition()">Start Speech</button>
+    <button onclick="stopSpeechRecognition()">Stop Speech</button>
+    <button onclick="saveText()">Submit</button>
+    
+    <p id="result"></p>
+
+    <script>
+        let recognition; // Variable to hold the Speech Recognition instance
+
+        function startSpeechRecognition() {
+            // Check if the browser supports the Speech Recognition API
+            if (!('webkitSpeechRecognition' in window)) {
+                alert("Your browser does not support speech recognition.");
+                return;
+            }
+
+            // Initialize speech recognition
+            recognition = new webkitSpeechRecognition();
+            recognition.lang = 'en-US'; // Set language (customize as needed)
+            recognition.continuous = true; // Enable continuous mode
+            recognition.interimResults = false; // Only final results
+            recognition.maxAlternatives = 1;
+
+            // Process the results
+            recognition.onresult = (event) => {
+                const speechResult = event.results[event.results.length - 1][0].transcript.trim();
+                const textArea = document.getElementById('textData');
+                
+                // Add the recognized text to the text area
+                textArea.value += speechResult + " ";
+            };
+
+            // Add a period and newline on a longer pause
+            recognition.onend = () => {
+                const textArea = document.getElementById('textData');
+                
+                // Only add a period and newline if the last character is not already a period or newline
+                if (textArea.value.slice(-1) !== '.') {
+                    textArea.value = textArea.value.trim() + ". "; // Add a period
+                }
+
+                // Restart recognition to continue listening
+                recognition.start();
+            };
+
+            // Handle errors
+            recognition.onerror = (event) => {
+                console.error("Speech recognition error:", event.error);
+            };
+
+            // Start listening
+            recognition.start();
+        }
+
+        function stopSpeechRecognition() {
+            if (recognition) {
+                recognition.stop(); // Stop listening
+                recognition = null; // Clear the instance
+            }
+        }
+
+        function saveText() {
+            const textData = document.getElementById('textData').value;
+
+            fetch('/save-text', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ textData: textData })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').innerText = data.message;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
