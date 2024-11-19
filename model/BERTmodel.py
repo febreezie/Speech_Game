@@ -2,7 +2,7 @@ from sentence_transformers import SentenceTransformer, util
 import os
 
 # Load the Sentence-BERT model
-similarity_model = SentenceTransformer('all-distilroberta-v1')
+similarity_model = SentenceTransformer('roberta-large-nli-stsb-mean-tokens')
 
 def check_relevance(sentence, topic_description):
     # Generate embeddings for the input sentence and the topic description
@@ -34,19 +34,29 @@ def generate_feedback(relevance_level, similarity):
         return f"The sentence is not relevant with a similarity score of {similarity:.2f}. It lacks specific terms or concepts related to the topic."
 
 def process_text_file(input_file_path, output_file_path, topic_description):
-    with open(input_file_path, 'r') as file:
-        sentence = file.read().strip()
+    try:
+        with open(input_file_path, 'r') as file:
+            sentence = file.read().strip()
 
-    relevance_level, feedback = check_relevance(sentence, topic_description)
+        relevance_level, feedback = check_relevance(sentence, topic_description)
 
-    with open(output_file_path, 'w') as file:
-        file.write(f"Sentence: {sentence}\n")
-        file.write(f"Relevance: {relevance_level}\n")
-        file.write(f"Feedback: {feedback}\n")
+        with open(output_file_path, 'w') as file:
+            file.write(f"Sentence: {sentence}\n")
+            file.write(f"Relevance: {relevance_level}\n")
+            file.write(f"Feedback: {feedback}\n")
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
 # Example usage
 if __name__ == '__main__':
     input_file_path = 'input.txt'  # File where the input sentence is stored
     output_file_path = 'output.txt' # File where the output will be written
     topic_description = "activities and aspects of farming, including cultivation of soil for the growing of crops and the rearing of animals to provide food, wool, and other products."
-    process_text_file(input_file_path, output_file_path, topic_description)
+    #process_text_file(input_file_path, output_file_path, topic_description)
+    #Delete comment symbol to test locally!
+    while True:
+        user_input = input("Enter a sentence to evaluate or type 'exit' to quit: ")
+        if user_input.lower() == 'exit':
+            break
+        relevance_level, feedback = check_relevance(user_input, topic_description)
+        print(f"The sentence relevance is: {relevance_level}. Feedback: {feedback}")

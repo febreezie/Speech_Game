@@ -11,3 +11,9 @@ cd into model file
 
 run the BERTmodel.py to install BERT backend
 
+
+#Model training/evaluation
+    pip install datasets
+    pip install transformers datasets scikit-learn
+    pip install transformers[torch]
+
