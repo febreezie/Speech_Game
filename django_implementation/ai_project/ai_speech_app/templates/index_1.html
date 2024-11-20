@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Speech to Text</title>
+</head>
+<body>
+    <h1>Real-Time Speech to Text</h1>
+
+    <h2>Your Topic:</h2>
+    <p id="topic">{{ random_topic }}</p>
+    <button id="newTopic">Get New Topic</button>
+
+    <button id="startRecording">Start Recording</button>
+    <button id="stopRecording" disabled>Stop Recording</button>
+    <p id="status">Status: Idle</p>
+    <h2>Transcription:</h2>
+    <p id="transcription"></p>
+    <button id="downloadTxt" disabled>Download TXT</button>
+
+    <h2>Enter Text:</h2>
+    <textarea id="userText" rows="4" cols="50"></textarea>
+    <br>
+    <button id="downloadUserText">Download User Text</button>
+
+    <script>
+        const topics = ["Farming", "Computer Technology", "Psychology"];
+        const topicElement = document.getElementById('topic');
+        const newTopicButton = document.getElementById('newTopic');
+        const startButton = document.getElementById('startRecording');
+        const stopButton = document.getElementById('stopRecording');
+        const statusText = document.getElementById('status');
+        const transcriptionText = document.getElementById('transcription');
+        const downloadTxtButton = document.getElementById('downloadTxt');
+        const downloadUserTextButton = document.getElementById('downloadUserText');
+        const userTextInput = document.getElementById('userText');
+        let mediaRecorder;
+        let audioChunks = [];
+        let transcriptionResult = null;
+
+        // Handle getting a new random topic
+        newTopicButton.addEventListener('click', () => {
+            const randomTopic = topics[Math.floor(Math.random() * topics.length)];
+            topicElement.textContent = randomTopic;
+        });
+
+        startButton.addEventListener('click', async () => {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+
+            mediaRecorder.ondataavailable = event => {
+                audioChunks.push(event.data);
+            };
+
+            mediaRecorder.onstop = async () => {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                const formData = new FormData();
+                formData.append('audio_data', audioBlob);
+
+                statusText.textContent = 'Status: Transcribing...';
+
+                try {
+                    const response = await fetch("", { method: "POST", body: formData });
+                    const result = await response.json();
+
+                    if (result.transcription) {
+                        transcriptionResult = result.transcription; // Save successful transcription
+                        transcriptionText.textContent = result.transcription;
+                        downloadTxtButton.disabled = false;
+                    } else if (result.error) {
+                        transcriptionResult = "Error: " + result.error; // Save error message
+                        transcriptionText.textContent = "Error: " + result.error;
+                        downloadTxtButton.disabled = false;
+                    }
+                } catch (error) {
+                    transcriptionResult = "Error: Unable to process the audio"; // Handle fetch error
+                    transcriptionText.textContent = "Error: Unable to process the audio.";
+                    downloadTxtButton.disabled = false;
+                } finally {
+                    statusText.textContent = 'Status: Idle';
+                }
+            };
+
+            mediaRecorder.start();
+            audioChunks = [];
+            statusText.textContent = 'Status: Recording...';
+            startButton.disabled = true;
+            stopButton.disabled = false;
+        });
+
+        stopButton.addEventListener('click', () => {
+            mediaRecorder.stop();
+            statusText.textContent = 'Status: Stopping...';
+            startButton.disabled = false;
+            stopButton.disabled = true;
+        });
+
+        // Handle TXT download for speech transcription
+        downloadTxtButton.addEventListener('click', () => {
+            if (transcriptionResult) {
+                const blob = new Blob([transcriptionResult], {
+                    type: "text/plain",
+                });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = transcriptionResult.startsWith("Error") ? "error.txt" : "transcription.txt";
+                a.click();
+                URL.revokeObjectURL(url); // Clean up
+            }
+        });
+
+        // Handle TXT download for user-entered text
+        downloadUserTextButton.addEventListener('click', () => {
+            const userText = userTextInput.value.trim();
+            if (userText) {
+                const blob = new Blob([userText], {
+                    type: "text/plain",
+                });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = "user_text.txt";
+                a.click();
+                URL.revokeObjectURL(url); // Clean up
+            } else {
+                alert("Please enter some text before downloading.");
+            }
+        });
+    </script>
+</body>
+</html>
