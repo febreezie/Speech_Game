@@ -1,5 +1,6 @@
 from sentence_transformers import SentenceTransformer, util
 import os
+from datetime import datetime
 
 # Load the Sentence-BERT model
 similarity_model = SentenceTransformer('roberta-large-nli-stsb-mean-tokens')
@@ -47,16 +48,75 @@ def process_text_file(input_file_path, output_file_path, topic_description):
     except Exception as e:
         print(f"An error occurred: {e}")
 
+def determine_general_accuracy(feedback_and_sentence_list):
+    #calculate average of accuracy scores
+    sum = 0
+    # need all of tuple index 1
+    for item in feedback_and_sentence_list:
+        sum = sum + item[1]
+    return sum / (len(feedback_and_sentence_list))
+
+def save_feedback_to_file(output_file_path, feedback_and_sentence_list, topic_description):
+    if not os.path.isfile(output_file_path): # check file existence
+        raise FileNotFoundError(f"Expected output file at path {output_file_path}, did not find.")
+    #File exists
+    try:
+        with open(output_file_path, 'w') as file: # "with" automatically closes file
+            file.write(f"Your topic: {topic_description}\n\n")
+            for item in feedback_and_sentence_list:
+                file.write(f"Your sentence: {item[0]}\n")
+                file.write(f"Relevance Level: {item[1]}\n")
+                file.write(f"Feedback: {item[2]}\n")
+                file.write("-" * 20 + "\n")
+            average_score = determine_general_accuracy(feedback_and_sentence_list)
+            file.write(f"\nOverall Score for Topic Accuracy: {average_score}")
+        print(f"Feedback saved to: {file_path}")
+        return file_path
+    except Exception as e:
+        print(f"Error in save_feedback_to_file with file {file_path}:\n\t{e}")
+       
+def get_grandparent_directory():
+    current_dir = os.path.abspath(os.getcwd())
+    grand_parent_dir = os.path.dirname(os.path.dirname(current_dir))
+    # if not parent_dir.endswith(os.sep):
+    #     parent_dir += os.sep
+    return grand_parent_dir
+
+def generate_output_file():
+    try:
+        # storing output files in grandparent directory
+        grandparent_dir = get_grandparent_directory()
+        os.makedirs(grandparent_dir, exist_ok=True) # check dir exists
+        
+        timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S") #generate unique filename
+        filename = f"output_text_{timestamp}.txt"
+        output_file_path = os.path.join(grandparent_dir, filename) #add txt file to path
+        return output_file_path
+    except Exception as e:
+        print(f"Error in creating output file {filename}: {e}")
+
+
+
+
 # Example usage
 if __name__ == '__main__':
     input_file_path = 'input.txt'  # File where the input sentence is stored
-    output_file_path = 'output.txt' # File where the output will be written
+    output_file_path = generate_output_file()
     topic_description = "activities and aspects of farming, including cultivation of soil for the growing of crops and the rearing of animals to provide food, wool, and other products."
-    #process_text_file(input_file_path, output_file_path, topic_description)
+    # process_text_file(input_file_path, output_file_path, topic_description)
     #Delete comment symbol to test locally!
+
+    feedback_and_sentence_list = []
+
     while True:
         user_input = input("Enter a sentence to evaluate or type 'exit' to quit: ")
-        if user_input.lower() == 'exit':
+        if user_input.lower().strip() == 'exit':
             break
         relevance_level, feedback = check_relevance(user_input, topic_description)
         print(f"The sentence relevance is: {relevance_level}. Feedback: {feedback}")
+        feedback_and_sentence_list.append((user_input, relevance_level, feedback))
+
+    #Write list to file
+    file_path = save_feedback_to_file(output_file_path, feedback_and_sentence_list, topic_description)
+
+    
