@@ -53,7 +53,8 @@ if __name__ == '__main__':
     output_file_path = 'output.txt' # File where the output will be written
     topic_description = "activities and aspects of farming, including cultivation of soil for the growing of crops and the rearing of animals to provide food, wool, and other products."
     #process_text_file(input_file_path, output_file_path, topic_description)
-    #Delete comment symbol to test locally!
+
+    #Delete comment symbol to test locally (comment out line above too)!
     while True:
         user_input = input("Enter a sentence to evaluate or type 'exit' to quit: ")
         if user_input.lower() == 'exit':
