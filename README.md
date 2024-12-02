@@ -36,16 +36,16 @@ The **AI Speech Game** is an interactive platform designed to help users practic
    git clone https://github.com/febreezie/Speech_Game
    cd Speech_Game
 
-2. **Instal Model and Evalution Dependencies**
+2. **Install Model Libraries**
     cd into model file in the Speech_Game.py
-        
-        cd model
-        pip install transformers
-        pip install sentence_transformers
+    
+    ```bash
+    cd model
+    pip install transformers
+    pip install sentence_transformers
 
-Run the BERTmodel.py to install BERT backend.
-
-#Model training/evaluation
+3. **Install Evaluation Dependencies**
+    ```bash
     pip install datasets
     pip install transformers datasets scikit-learn
     pip install transformers[torch]
