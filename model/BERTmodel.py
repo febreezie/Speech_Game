@@ -108,6 +108,9 @@ if __name__ == '__main__':
 
     feedback_and_sentence_list = []
 
+    #process_text_file(input_file_path, output_file_path, topic_description)
+
+    #Delete comment symbol to test locally (comment out line above too)!
     while True:
         user_input = input("Enter a sentence to evaluate or type 'exit' to quit: ")
         if user_input.lower().strip() == 'exit':
