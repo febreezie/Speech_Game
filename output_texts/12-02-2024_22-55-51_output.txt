@@ -1,0 +1,46 @@
+Topic Description: activities and aspects of farming, including cultivation of soil for the growing of crops and the rearing of animals to provide food, wool, and other products.
+
+Sentence 1: sentence one.
+Relevance Level: 
+	Not Relevant
+Similarity to topic: 
+	-0.018117714673280716
+Feedback: 
+	The sentence is not relevant with a similarity score of -0.02. It lacks specific terms or concepts related to the topic.
+--------------------
+Sentence 2: A farm has food, crops, animals, and plants.
+Relevance Level: 
+	Highly Relevant
+Similarity to topic: 
+	0.7770828008651733
+Feedback: 
+	The sentence is highly relevant with a similarity score of 0.78. It aligns well with the topic.
+--------------------
+Sentence 3: I like call of duty and minecraft.
+Relevance Level: 
+	Not Relevant
+Similarity to topic: 
+	0.19695356488227844
+Feedback: 
+	The sentence is not relevant with a similarity score of 0.20. It lacks specific terms or concepts related to the topic.
+--------------------
+Sentence 4: Minecraft has farms, mountains, oceans, crops, animals, and construction.
+Relevance Level: 
+	Highly Relevant
+Similarity to topic: 
+	0.5227991342544556
+Feedback: 
+	The sentence is highly relevant with a similarity score of 0.52. It aligns well with the topic.
+--------------------
+Sentence 5: This sentence should not match at all.
+Relevance Level: 
+	Not Relevant
+Similarity to topic: 
+	-0.05443139001727104
+Feedback: 
+	The sentence is not relevant with a similarity score of -0.05. It lacks specific terms or concepts related to the topic.
+--------------------
+
+
+Overall topic accuracy score: 0.2848572790622711.
+You have room for improvement. You stayed on topic part of the time, but went off topic too often.
