@@ -21,7 +21,8 @@
 
     <!-- Static farming topic -->
     <div id="topicDisplay">Topic: Farming</div>
-    
+    <p>Tip: This also works with text input if you want to save time repeatedly testing your writing!</p>
+
     <!-- Text area for input -->
     <textarea id="textData" rows="10" cols="50" placeholder="Type or speak here..."></textarea>
     <br>
@@ -117,9 +118,25 @@
                 },
                 body: JSON.stringify({ textData: textData })
             })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('result').innerText = data.message;
+            .then(response => {
+                if (response.ok) {
+                    return response.blob(); // Get the file as a Blob
+                } else {
+                    return response.json().then(data => {
+                        throw new Error(data.message || 'Error saving text.');
+                    });
+                }
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = 'topic_accuracy_report.txt'; // Set the file name
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
             })
             .catch(error => console.error('Error:', error));
         }

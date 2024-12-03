@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, send_file
 import os, sys
 from datetime import datetime
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -72,6 +72,7 @@ def save_text():
 
         try:
             process_text_file(input_file_path, output_file_path, TOPIC_DESCRIPTION)
+            return send_file(output_file_path, as_attachment=True)
         except Exception as e:
             return jsonify({'message': f'Error with processing user input: {str(e)}'}), 500
         return jsonify({'message': 'Text saved successfully', 'file': output_file_path})

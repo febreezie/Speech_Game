@@ -55,7 +55,7 @@ def process_text_file(input_file_path, output_file_path, topic_description):
         with open(output_file_path, 'w') as file:
             file.write(f"Topic Description: {topic_description}\n\n")
             for i, (sentence, relevance_level, feedback, similarity) in enumerate(results, 1):
-                file.write(f"Sentence {i}: {sentence}\n")
+                file.write(f"Sentence {i}: \"{sentence}\"\n")
                 file.write(f"Relevance Level: \n\t{relevance_level}\n")
                 file.write(f"Similarity to topic: \n\t{similarity}\n")
                 file.write(f"Feedback: \n\t{feedback}\n")
